@@ -1,7 +1,6 @@
 package com.example.clock;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,11 +10,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -127,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 🔥🔥 여기만 추가하면 끝
         adapter.setOnItemClickListener(item -> {
             Intent intent = new Intent(MainActivity.this, RecipeDetailActivity.class);
 
@@ -136,43 +135,48 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("description", item.description);
             intent.putExtra("imageUrl", item.imageUrl);
 
-            // ⚠️ 서버 JSON에 portion, cookingTime, difficulty 추가되면 여기도 넣기
-            // intent.putExtra("portion", item.portion);
-
             startActivity(intent);
         });
 
-
-
-
-        searchBar.setOnKeyListener(new View.OnKeyListener() {
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                keyword = s.toString().trim();
 
-                keyword = searchBar.getText().toString().trim();
-
-                openSearchPanel(); //패널 열기
-                loadSearchResults(keyword); //패널 검색
-                //searchResultList.scrollToPosition(searchResults.size() - 1);
-
-                if(keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-//                    searchBar.dispatchKeyEvent(
-//                            new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER)
-//                    );
-                    page = 0;
-                    isLastPage = false;
-
-                    loadPage(true);  // 리스트 초기화 후 다시 로딩
-
+                if (keyword.isEmpty()) {
+                    searchResults.clear();
+                    searchAdapter.notifyDataSetChanged();
                     closeSearchPanel();
-
-
-                    return true;
-                }else{
-                    return false;
+                } else {
+                    openSearchPanel();
+                    loadSearchResults(keyword);
                 }
             }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
+        searchBar.setOnEditorActionListener((v, actionId, event) -> {
+            boolean enterPressed = event != null
+                    && event.getAction() == KeyEvent.ACTION_DOWN
+                    && event.getKeyCode() == KeyEvent.KEYCODE_ENTER;
+
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || enterPressed) {
+                performSearch();
+                return true;
+            }
+            return false;
+        });
+
+        searchAdapter.setOnSuggestionClickListener(suggestion -> {
+            searchBar.setText(suggestion.getTitle());
+            searchBar.setSelection(searchBar.getText().length());
+            keyword = suggestion.getTitle();
+            performSearch();
         });
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -182,23 +186,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-//        // 검색: 키보드에서 "검색" 누르면 동작
-//        searchBar.setOnEditorActionListener((v, actionId, event) -> {
-//            if (actionId == EditorInfo.IME_ACTION_SEARCH
-//                    || actionId == EditorInfo.IME_ACTION_DONE) {
-//
-//                keyword = searchBar.getText().toString().trim();
-//                page = 0;
-//                isLastPage = false;
-//
-//                loadPage(true);  // 리스트 초기화 후 다시 로딩
-//                return true;
-//            }
-//            return false;
-//        });
     }
 
+
+    private void performSearch() {
+        keyword = searchBar.getText().toString().trim();
+        page = 0;
+        isLastPage = false;
+
+        loadPage(true);
+        closeSearchPanel();
+    }
 
     private void loadPage(boolean clearFirst) {
         isLoading = true;
@@ -272,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
 
             items[i].setOnClickListener(v -> {
                 moveCircle(index);
+                handleNavigation(index);
             });
         }
     }
@@ -284,6 +283,23 @@ public class MainActivity extends AppCompatActivity {
             float targetX = item.getX() + item.getWidth() / 2f - circle.getWidth() / 2f;
             circle.setTranslationX(targetX);
         });
+    }
+
+    private void handleNavigation(int index) {
+        String message;
+        switch (index) {
+            case 0:
+                message = "홈";
+                break;
+            case 1:
+                message = "필터";
+                break;
+            default:
+                message = "설정";
+                break;
+        }
+
+        Toast.makeText(this, message + " 메뉴 준비 중", Toast.LENGTH_SHORT).show();
     }
 
     // 클릭 시 동그라미 이동 (애니메이션)
@@ -335,22 +351,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void openSearchPanel() {
-        float screenHeight = getResources().getDisplayMetrics().heightPixels;
-
-        // 하단 네비 영역 + 여유 공간 남기기
-        float targetY = screenHeight * 0.30f;  // 위에서 25% 남기고 75% 위치까지 내려오기
-
         searchResultPanel.setVisibility(View.VISIBLE);
         searchResultPanel.animate()
-                .translationY(-targetY)
-                .setDuration(450)
+                .translationY(0)
+                .setDuration(300)
                 .start();
     }
 
     private void closeSearchPanel() {
+        float target = searchResultPanel.getHeight() == 0
+                ? -500f
+                : -searchResultPanel.getHeight();
         searchResultPanel.animate()
-                .translationY(-searchResultPanel.getHeight())
-                .setDuration(450)
+                .translationY(target)
+                .setDuration(300)
                 .withEndAction(() -> searchResultPanel.setVisibility(View.GONE))
                 .start();
     }

@@ -16,9 +16,19 @@ public class SearchTextAdapter extends RecyclerView.Adapter<SearchTextAdapter.Vi
     private ArrayList<Recipe> list;
     private Context context;
 
+    public interface OnSuggestionClickListener {
+        void onSuggestionClick(Recipe suggestion);
+    }
+
+    private OnSuggestionClickListener listener;
+
     public SearchTextAdapter(Context context, ArrayList<Recipe> list) {
         this.context = context;
         this.list = list;
+    }
+
+    public void setOnSuggestionClickListener(OnSuggestionClickListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -33,6 +43,10 @@ public class SearchTextAdapter extends RecyclerView.Adapter<SearchTextAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         Recipe r = list.get(position);
         holder.textView.setText(r.getTitle()); // 제목만 표시
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onSuggestionClick(r);
+        });
     }
 
     @Override

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Clock</string>
+    <string name="search_hint">레시피 검색</string>
+    <string name="bottom_nav_home">홈</string>
+    <string name="bottom_nav_filter">필터</string>
+    <string name="bottom_nav_option">설정</string>
 </resources>
