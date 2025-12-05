@@ -4,4 +4,5 @@
     <string name="bottom_nav_home">홈</string>
     <string name="bottom_nav_filter">필터</string>
     <string name="bottom_nav_option">설정</string>
+    <string name="search_failed">검색 중 오류가 발생했습니다</string>
 </resources>

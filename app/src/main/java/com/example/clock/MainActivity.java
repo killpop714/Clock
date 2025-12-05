@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView searchResultList;
     private SearchTextAdapter searchAdapter;
     private ArrayList<Recipe> searchResults = new ArrayList<>();
+    private float searchPanelHiddenOffset = -500f;
 
     // 래시피 등록 버튼
     private ImageView btnRegister;
@@ -116,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 클릭 이벤트 연결
         setListeners();
+
+        // 검색 패널 초기 위치 조정
+        prepareSearchPanel();
 
         // 무한 스크롤
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -350,21 +354,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void prepareSearchPanel() {
+        searchResultPanel.post(() -> {
+            searchPanelHiddenOffset = -searchResultPanel.getHeight();
+            searchResultPanel.setTranslationY(searchPanelHiddenOffset);
+            searchResultPanel.setVisibility(View.GONE);
+            searchResultPanel.setOnClickListener(v -> closeSearchPanel());
+        });
+    }
+
     private void openSearchPanel() {
         searchResultPanel.setVisibility(View.VISIBLE);
         searchResultPanel.animate()
                 .translationY(0)
-                .setDuration(300)
+                .setDuration(200)
                 .start();
     }
 
     private void closeSearchPanel() {
         float target = searchResultPanel.getHeight() == 0
-                ? -500f
+                ? searchPanelHiddenOffset
                 : -searchResultPanel.getHeight();
         searchResultPanel.animate()
                 .translationY(target)
-                .setDuration(300)
+                .setDuration(200)
                 .withEndAction(() -> searchResultPanel.setVisibility(View.GONE))
                 .start();
     }
@@ -381,12 +394,16 @@ public class MainActivity extends AppCompatActivity {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.search_failed, Toast.LENGTH_SHORT).show());
+            }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
                 try {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
                     JSONArray arr = new JSONArray(response.body().string());
 
                     runOnUiThread(() -> {
@@ -408,7 +425,9 @@ public class MainActivity extends AppCompatActivity {
                         searchAdapter.notifyDataSetChanged();
                     });
 
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this, R.string.search_failed, Toast.LENGTH_SHORT).show());
+                }
             }
         });
     }
