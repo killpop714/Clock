@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".RegisterRecipe">
+
+    <!-- ✅ ScrollView는 자식 하나만 가능 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+            <ImageView
+                android:id="@+id/ImageVew"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+
+
+        <!-- 이 밑은 레시피 제목 레이아웃-->
+        <LinearLayout
+            android:id="@+id/TitleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/TitleVew"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="레시피 제목" />
+
+            <EditText
+                android:id="@+id/TitleEdt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="예) 맛있는 파스타 제작" />
+        </LinearLayout>
+
+        <!-- 이 밑은 레시피 설명 레이아웃-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/DescriptionVew"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="레시피 설명" />
+
+            <EditText
+                android:id="@+id/DescriptionEdt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="예) 레시피의 설명을 쓰고 조리방법을 간단히 알려줘요" />
+        </LinearLayout>
+
+        <!-- 이 밑은 재료 묶음 레이아웃-->
+        <LinearLayout
+            android:id="@+id/IngredientLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="재료 정보"/>
+
+            <!-- 🔥 카테고리 여러 개 추가되는 공간 -->
+            <LinearLayout
+                android:id="@+id/CategoryContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- 🔥 카테고리 추가 버튼 -->
+            <Button
+                android:id="@+id/AddCategoryBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="재료 구분 추가"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/CookingStepLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="요리 순서"/>
+
+                <!-- 🔥 여러 Step이 추가될 컨테이너 -->
+                <LinearLayout
+                    android:id="@+id/StepContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <!-- 🔥 Step 추가 버튼 -->
+                <Button
+                    android:id="@+id/AddStepBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="요리 순서 추가"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="20dp">
+
+            <!-- 투명 버튼 (클릭만 가능) -->
+            <Button
+                android:id="@+id/PortionBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:text=""
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                android:stateListAnimator="@null" />
+
+            <!-- 버튼 위의 내용 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="인원" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/PortionTvew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="선택" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="20dp">
+
+            <!-- 투명 버튼 (클릭만 가능) -->
+            <Button
+                android:id="@+id/CookingTimeBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:text=""
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                android:stateListAnimator="@null" />
+
+            <!-- 버튼 위의 내용 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="요리시간" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/CookingTimeTvew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="선택" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="20dp">
+
+            <!-- 투명 버튼 (클릭만 가능) -->
+            <Button
+                android:id="@+id/DifficultyBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:text=""
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                android:stateListAnimator="@null" />
+
+            <!-- 버튼 위의 내용 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="난이도" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/DifficultyTvew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="선택" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/RegisterRecipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="레시피 생성"/>
+
+
+    </LinearLayout>
+</ScrollView>

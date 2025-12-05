@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="5dp">
+
+    <EditText
+        android:id="@+id/IngName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:hint="재료명"
+        android:background="@drawable/text_bg"/>
+
+    <EditText
+        android:id="@+id/IngAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="양"
+        android:background="@drawable/text_bg"/>
+
+    <Button
+        android:id="@+id/DeleteIngBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="X"/>
+</LinearLayout>

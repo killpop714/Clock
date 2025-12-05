@@ -1,0 +1,61 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <!-- 🔥 Step 상단 (순서 번호 + 삭제 버튼) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/StepTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="순서"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/DeleteStepBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="삭제"/>
+    </LinearLayout>
+
+
+    <!-- 🔥 설명 입력 -->
+    <EditText
+        android:id="@+id/StepDescriptionEdt"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:hint="설명 입력"
+        android:background="@drawable/text_bg"
+        android:gravity="top"
+        android:inputType="textMultiLine"/>
+
+
+    <!-- 🔥 사진(선택 시 미리보기 + 버튼) -->
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/StepImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <Button
+            android:id="@+id/StepImageBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:text="사진"/>
+    </FrameLayout>
+
+</LinearLayout>

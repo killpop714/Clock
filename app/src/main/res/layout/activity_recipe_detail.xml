@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 대표 이미지 -->
+        <ImageView
+            android:id="@+id/detail_ivImage"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:scaleType="centerCrop"
+            android:background="#DDDDDD" />
+
+        <!-- 제목 -->
+        <TextView
+            android:id="@+id/detail_tvTitle"
+            android:layout_marginTop="20dp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- 설명 -->
+        <TextView
+            android:id="@+id/detail_tvDescription"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- 인원 -->
+        <TextView
+            android:id="@+id/detail_tvPortion"
+            android:layout_marginTop="20dp"
+            android:text="인원: -"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- 요리 시간 -->
+        <TextView
+            android:id="@+id/detail_tvTime"
+            android:layout_marginTop="10dp"
+            android:text="요리시간: -"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- 난이도 -->
+        <TextView
+            android:id="@+id/detail_tvDifficulty"
+            android:layout_marginTop="10dp"
+            android:text="난이도: -"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</ScrollView>

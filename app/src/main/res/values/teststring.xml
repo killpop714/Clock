@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="test">Hello!</string>
+    <string name="app_label">Recipe</string>
+    <string name="search_hint">예시: 파스타</string>
+</resources>
