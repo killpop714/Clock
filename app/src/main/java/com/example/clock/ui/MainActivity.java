@@ -1,7 +1,6 @@
-package com.example.clock;
+package com.example.clock.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,12 +9,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
+import com.example.clock.R;
+import com.example.clock.model.Recipe;
+import com.example.clock.adapter.RecipeAdapter;
+import com.example.clock.adapter.SearchTextAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),RegisterRecipe.class);
+                Intent intent = new Intent(getApplicationContext(), RegisterRecipe.class);
                 startActivity(intent);
             }
         });

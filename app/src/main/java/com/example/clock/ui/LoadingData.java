@@ -1,4 +1,4 @@
-package com.example.clock;
+package com.example.clock.ui;
 
 import android.app.Activity;
 import android.os.Bundle;

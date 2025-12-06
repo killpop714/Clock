@@ -1,4 +1,4 @@
-package com.example.clock;
+package com.example.clock.model;
 
 public class Recipe {
     public int id;

@@ -1,4 +1,4 @@
-package com.example.clock;
+package com.example.clock.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.clock.R;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
