@@ -2,64 +2,132 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <!-- 대표 이미지 -->
         <ImageView
-            android:id="@+id/detail_ivImage"
+            android:id="@+id/detail_image"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
-            android:scaleType="centerCrop"
-            android:background="#DDDDDD" />
+            android:layout_height="220dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="#E0E0E0" />
 
         <!-- 제목 -->
         <TextView
-            android:id="@+id/detail_tvTitle"
-            android:layout_marginTop="20dp"
-            android:textSize="22sp"
+            android:id="@+id/detail_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textColor="#000" />
 
         <!-- 설명 -->
         <TextView
-            android:id="@+id/detail_tvDescription"
-            android:layout_marginTop="10dp"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:id="@+id/detail_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="14sp"
+            android:textColor="#555" />
 
-        <!-- 인원 -->
+        <!-- ========== 재료 영역 ========== -->
         <TextView
-            android:id="@+id/detail_tvPortion"
+            android:id="@+id/label_ingredient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="인원: -"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:text="재료"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000" />
 
-        <!-- 요리 시간 -->
-        <TextView
-            android:id="@+id/detail_tvTime"
-            android:layout_marginTop="10dp"
-            android:text="요리시간: -"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <!-- 카테고리 + 재료 묶음 리스트 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
 
-        <!-- 난이도 -->
+        <!-- ========== 조리 단계 영역 ========== -->
         <TextView
-            android:id="@+id/detail_tvDifficulty"
-            android:layout_marginTop="10dp"
-            android:text="난이도: -"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:id="@+id/label_step"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="조리 순서"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_step"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
+
+        <!-- 인분 + 요리시간 + 난이도 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/detail_portion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1인분"
+                android:textSize="13sp"
+                android:textColor="#666"
+                android:background="#EEEEEE"
+                android:padding="6dp"/>
+
+            <TextView
+                android:id="@+id/detail_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="10분 이내"
+                android:textSize="13sp"
+                android:textColor="#666"
+                android:background="#EEEEEE"
+                android:padding="6dp"/>
+
+            <TextView
+                android:id="@+id/detail_difficulty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="쉬움"
+                android:textSize="13sp"
+                android:textColor="#666"
+                android:background="#EEEEEE"
+                android:padding="6dp"/>
+
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/detail_creator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="작성자: "
+            android:textSize="14sp"
+            android:textColor="#777"
+            android:layout_marginTop="4dp"/>
+
 
     </LinearLayout>
+
+
+
 </ScrollView>

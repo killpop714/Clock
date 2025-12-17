@@ -1,22 +1,34 @@
 package com.example.clock.ui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.example.clock.R;
+import com.example.clock.model.Ingredient;
 import com.example.clock.model.Recipe;
 import com.example.clock.adapter.RecipeAdapter;
 import com.example.clock.adapter.SearchTextAdapter;
+import com.example.clock.ui.animator.HomeAnimation;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,14 +36,19 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    private HomeAnimation animation;
 
     private RecyclerView recyclerView;
     private RecipeAdapter adapter;
@@ -43,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText searchBar;
     private String keyword = "";
+
+
 
 
 
@@ -61,6 +80,33 @@ public class MainActivity extends AppCompatActivity {
     // 래시피 등록 버튼
     private ImageView btnRegister;
 
+
+
+    // 🔵 필터 패널
+    private LinearLayout filterContainer;
+
+    // 🔵 최근 업데이트
+    private RadioGroup filterRecent;
+    private RadioButton recent_1day, recent_7day, recent_30day;
+
+    // 🟩 조리 시간
+    private RadioGroup filterTime;
+    private RadioButton time_10, time_30, time_60, time_over;
+
+    // 🟧 난이도
+    private RadioGroup filterDifficulty;
+    private RadioButton diff_easy, diff_medium, diff_hard;
+
+    // 🟪 인분
+    private RadioGroup filterServing;
+    private RadioButton serve_1, serve_2, serve_3, serve_4;
+
+    // 적용 버튼
+    private Button btnApplyFilter;
+
+    boolean isSubmitting = false;
+
+
     //http 연결 변수
     private final OkHttpClient client = new OkHttpClient();
 
@@ -68,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
 
         //검색 바 전용
@@ -79,12 +127,46 @@ public class MainActivity extends AppCompatActivity {
         adapter = new RecipeAdapter(this, list);
         recyclerView.setAdapter(adapter);
 
+        //필터 바 연결
+        filterContainer = findViewById(R.id.filterContainer);
+        // 최근 업데이트
+        filterRecent = findViewById(R.id.filterRecent);
+        recent_1day = findViewById(R.id.recent_1day);
+        recent_7day = findViewById(R.id.recent_7day);
+        recent_30day = findViewById(R.id.recent_30day);
+
+// 조리 시간
+        filterTime = findViewById(R.id.filterTime);
+        time_10 = findViewById(R.id.time_10);
+        time_30 = findViewById(R.id.time_30);
+        time_60 = findViewById(R.id.time_60);
+        time_over = findViewById(R.id.time_over);
+
+// 난이도
+        filterDifficulty = findViewById(R.id.filterDifficulty);
+        diff_easy = findViewById(R.id.diff_easy);
+        diff_medium = findViewById(R.id.diff_medium);
+        diff_hard = findViewById(R.id.diff_hard);
+
+// 인분
+        filterServing = findViewById(R.id.filterServing);
+        serve_1 = findViewById(R.id.serve_1);
+        serve_2 = findViewById(R.id.serve_2);
+        serve_3 = findViewById(R.id.serve_3);
+        serve_4 = findViewById(R.id.serve_4);
+
+// 적용 버튼
+        btnApplyFilter = findViewById(R.id.btnApplyFilter);
 
         //하단탭바 전용
         circle = findViewById(R.id.highlightCircle);
         home = findViewById(R.id.navHome);
         filter = findViewById(R.id.navFilter);
         option = findViewById(R.id.navOption);
+        View root = findViewById(android.R.id.content);
+        animation = new HomeAnimation(root);
+        animation.addCircle(circle);
+
 
         //상단 검색 리스트
         searchResultPanel = findViewById(R.id.searchResultPanel);
@@ -92,6 +174,10 @@ public class MainActivity extends AppCompatActivity {
 
         //래시피 등록 버튼
         btnRegister = findViewById(R.id.btnRegister);
+
+
+        View rootView = getWindow().getDecorView().getRootView();
+
 
 
 
@@ -110,71 +196,190 @@ public class MainActivity extends AppCompatActivity {
         loadPage(true);
 
 
+        //기초 애니메이션
         items = new View[]{home, filter, option};
-
         // 초기 위치: 홈
-        setCirclePosition(0);
+        animation.setCirclePosition(0);
 
-        // 클릭 이벤트 연결
-        setListeners();
+        //홈버튼
+        home.setOnClickListener(v ->{
+            animation.moveCircle(0);
+            animation.closeFilter();
+            animation.closeOption();
+
+        });
+
+        //필터 컨테이너 버튼
+        filter.setOnClickListener(v ->{
+            animation.moveCircle(1);
+            animation.openFilter();
+            animation.closeOption();
+        });
+
+        //설정 컨테이너 버튼
+        option.setOnClickListener(v->{
+            animation.moveCircle(2);
+            animation.openOption();
+            animation.closeFilter();
+        });
+
+        Button btnLogout = findViewById(R.id.btnLogout);
+
+        btnLogout.setOnClickListener(v -> {
+            getSharedPreferences("user", MODE_PRIVATE)
+                    .edit()
+                    .clear()
+                    .apply();
+
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
+
+        SharedPreferences prefs = getSharedPreferences("user", MODE_PRIVATE);
+
+        boolean isLogin = prefs.getBoolean("isLogin", false);
+
+        if (!isLogin) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
 
         // 무한 스크롤
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView rv, int dx, int dy) {
-                if (!rv.canScrollVertically(1) && !isLoading && !isLastPage) {
-                    loadPage(false);
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                int visibleItemCount = manager.getChildCount();
+                int totalItemCount = manager.getItemCount();
+                int firstVisibleItemPosition = manager.findFirstVisibleItemPosition();
+
+                // 스크롤이 아래로 내려가는 중 + 로딩 중 아니고 + 마지막 페이지 아니면
+                if (!isLoading && !isLastPage) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 2) {
+                        // 마지막 근처에 도달하면 다음 페이지 요청
+                        page++;
+                        loadPage(false); // false면 기존 리스트 유지 후 뒤에 추가
+                    }
                 }
             }
         });
 
-        // 🔥🔥 여기만 추가하면 끝
-        adapter.setOnItemClickListener(item -> {
-            Intent intent = new Intent(MainActivity.this, RecipeDetailActivity.class);
 
-            intent.putExtra("id", item.id);
-            intent.putExtra("title", item.title);
-            intent.putExtra("description", item.description);
-            intent.putExtra("imageUrl", item.imageUrl);
+        btnApplyFilter.setOnClickListener(v -> {
 
-            // ⚠️ 서버 JSON에 portion, cookingTime, difficulty 추가되면 여기도 넣기
-            // intent.putExtra("portion", item.portion);
+            // 선택된 필터 가져오기
+            Map<String, String> filters = getFilterParams();
 
-            startActivity(intent);
+            // 페이지 초기화
+            page = 0;
+            isLastPage = false;
+            list.clear();
+            adapter.notifyDataSetChanged();
+
+            // 다시 API 호출
+            loadPage(true, filters);
+
+            // 패널 닫기 (있을 경우)
+           animation.closeFilter();
+           animation.moveCircle(0);
+
         });
 
 
 
 
-        searchBar.setOnKeyListener(new View.OnKeyListener() {
+//        searchBar.setOnKeyListener(new View.OnKeyListener() {
+//
+//            @Override
+//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//
+//                keyword = searchBar.getText().toString().trim();
+//
+//                animation.openSearchPanel(getApplicationContext(), searchResultPanel); //패널 열기
+//                loadSearchResults(keyword); //패널 검색
+//                //searchResultList.scrollToPosition(searchResults.size() - 1);
+//
+//                if(keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+////                    searchBar.dispatchKeyEvent(
+////                            new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER)
+////                    );
+//                    Log.d("작동중","작동");
+//                    page = 0;
+//                    isLastPage = false;
+//
+//                    loadPage(true);  // 리스트 초기화 후 다시 로딩
+//
+//                    animation.closeSearchPanel(searchResultPanel);
+//
+//
+//                    return true;
+//                }else{
+//                    return false;
+//                }
+//            }
+//        });
+
+
+
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+
 
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+            public void afterTextChanged(Editable editable) {
+                animation.openSearchPanel(getApplicationContext(), searchResultPanel); //패널 열기
+                loadSearchResults(editable.toString().trim()); //패널 검색\
+            }
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                keyword = searchBar.getText().toString().trim();
-
-                openSearchPanel(); //패널 열기
-                loadSearchResults(keyword); //패널 검색
-                //searchResultList.scrollToPosition(searchResults.size() - 1);
-
-                if(keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-//                    searchBar.dispatchKeyEvent(
-//                            new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER)
-//                    );
-                    page = 0;
-                    isLastPage = false;
-
-                    loadPage(true);  // 리스트 초기화 후 다시 로딩
-
-                    closeSearchPanel();
-
-
-                    return true;
-                }else{
-                    return false;
-                }
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
         });
+//
+        searchBar.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH
+                    || actionId == EditorInfo.IME_ACTION_DONE
+                    || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                    && event.getAction() == KeyEvent.ACTION_DOWN)) {
+                Log.d("작동중","작동");
+                keyword = searchBar.getText().toString().trim();
+
+                page = 0;
+                isLastPage = false;
+                loadPage(true); // 최종 검색
+
+                animation.closeSearchPanel(searchResultPanel);
+                return true;
+            }
+            Log.d("작동중","작동");
+            return false;
+        });
+
+
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Rect r = new Rect();
+            rootView.getWindowVisibleDisplayFrame(r);
+
+            int screenHeight = rootView.getHeight();
+            int keypadHeight = screenHeight - r.bottom;
+
+            boolean isKeyboardOpen = keypadHeight > screenHeight * 0.15;
+
+            if (!isKeyboardOpen) {
+                // 🔽 키보드가 내려갔을 때
+                animation.closeSearchPanel(searchResultPanel);
+            }
+        });
+
+
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,25 +388,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-//        // 검색: 키보드에서 "검색" 누르면 동작
-//        searchBar.setOnEditorActionListener((v, actionId, event) -> {
-//            if (actionId == EditorInfo.IME_ACTION_SEARCH
-//                    || actionId == EditorInfo.IME_ACTION_DONE) {
-//
-//                keyword = searchBar.getText().toString().trim();
-//                page = 0;
-//                isLastPage = false;
-//
-//                loadPage(true);  // 리스트 초기화 후 다시 로딩
-//                return true;
-//            }
-//            return false;
-//        });
     }
 
 
     private void loadPage(boolean clearFirst) {
+
+        if(isLoading) return;
         isLoading = true;
 
         if (clearFirst) {
@@ -224,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 isLoading = false;
                 Log.e("HTTP", "Fail: " + e.getMessage());
+                isSubmitting = false;
             }
 
             @Override
@@ -245,11 +438,16 @@ public class MainActivity extends AppCompatActivity {
                                     o.optString("title"),
                                     o.optString("description"),
                                     o.optString("imageUrl"),
-                                    o.optInt("point")
+                                    o.optInt("point"),
+
+                                    o.optString("portion"),
+                                    o.optString("cookingTime"),
+                                    o.optString("difficulty")
+
+
                             );
                             list.add(r);
                         }
-                        page++;
                     }
 
                     runOnUiThread(() -> adapter.notifyDataSetChanged());
@@ -259,139 +457,130 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 isLoading = false;
+                isSubmitting = false;
 
 
             }
         });
-
-        
     }
-    private void setListeners() {
 
-        for (int i = 0; i < items.length; i++) {
-            int index = i;
+    private void loadPage(boolean clear, Map<String, String> filters) {
 
-            items[i].setOnClickListener(v -> {
-                moveCircle(index);
-            });
+        if (isLoading || isLastPage) return;
+        isLoading = true;
+
+        HttpUrl.Builder builder = HttpUrl.parse("https://avocadoteam.n-e.kr/api/HomeFilter")
+                .newBuilder()
+                .addQueryParameter("page", String.valueOf(page));
+
+        // 🔥 필터 추가
+        if (filters != null) {
+            for (String key : filters.keySet()) {
+                builder.addQueryParameter(key, filters.get(key));
+            }
         }
-    }
 
-    // 처음 위치 세팅 (즉시 이동)
-    private void setCirclePosition(int index) {
-        View item = items[index];
+        HttpUrl url = builder.build();
 
-        item.post(() -> {
-            float targetX = item.getX() + item.getWidth() / 2f - circle.getWidth() / 2f;
-            circle.setTranslationX(targetX);
-        });
-    }
-
-    // 클릭 시 동그라미 이동 (애니메이션)
-    private void moveCircle(int index) {
-        View item = items[index];
-
-        item.post(() -> {
-
-            float targetX = item.getX() + item.getWidth() / 2f - circle.getWidth() / 2f;
-
-            // 1) 먼저 작아지는 애니메이션
-            circle.animate()
-                    .scaleX(0.7f)
-                    .scaleY(0.7f)
-                    .setDuration(120)
-                    .withEndAction(() -> {
-
-                        // 2) 작아진 상태에서 이동
-                        circle.animate()
-                                .translationX(targetX)
-                                .setDuration(200)
-                                .withEndAction(() -> {
-
-                                    // 3) 도착할 때 크게 튀어오름
-                                    circle.animate()
-                                            .scaleX(1.15f)
-                                            .scaleY(1.15f)
-                                            .setDuration(120)
-                                            .withEndAction(() -> {
-
-                                                // 4) 마지막 원래 크기 복귀
-                                                circle.animate()
-                                                        .scaleX(1f)
-                                                        .scaleY(1f)
-                                                        .setDuration(120)
-                                                        .start();
-
-                                            })
-                                            .start();
-
-                                })
-                                .start();
-
-                    })
-                    .start();
-
-        });
-    }
-
-
-    private void openSearchPanel() {
-        float screenHeight = getResources().getDisplayMetrics().heightPixels;
-
-        // 하단 네비 영역 + 여유 공간 남기기
-        float targetY = screenHeight * 0.30f;  // 위에서 25% 남기고 75% 위치까지 내려오기
-
-        searchResultPanel.setVisibility(View.VISIBLE);
-        searchResultPanel.animate()
-                .translationY(-targetY)
-                .setDuration(450)
-                .start();
-    }
-
-    private void closeSearchPanel() {
-        searchResultPanel.animate()
-                .translationY(-searchResultPanel.getHeight())
-                .setDuration(450)
-                .withEndAction(() -> searchResultPanel.setVisibility(View.GONE))
-                .start();
-    }
-
-    private void loadSearchResults(String query) {
-
-        searchResults.clear();
-
-        String url = "https://avocadoteam.n-e.kr/api/HomeFetch?query=" + query;
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request request = new Request.Builder().url(url).get().build();
 
         client.newCall(request).enqueue(new Callback() {
+
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {
+                isLoading = false;
+            }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
+                String body = response.body().string();
+                Log.d("HOME", "Response: " + body);
+
+                try {
+                    JSONArray arr = new JSONArray(body);
+
+                    if (clear) list.clear();
+
+                    if (arr.length() == 0) {
+                        isLastPage = true;
+                    } else {
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject o = arr.getJSONObject(i);
+                            list.add(new Recipe(
+                                    o.optInt("id"),
+                                    o.optString("title"),
+                                    o.optString("description"),
+                                    o.optString("imageUrl"),
+                                    o.optInt("point"),
+
+                                    o.optString("portion"),
+                                    o.optString("cookingTime"),
+                                    o.optString("difficulty")
+                            ));
+                        }
+                    }
+
+                    runOnUiThread(() -> adapter.notifyDataSetChanged());
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                isLoading = false;
+            }
+        });
+    }
+
+
+
+
+    private void loadSearchResults(String query) {
+
+        Log.d("스트링",query);
+        searchResults.clear();
+
+        String url = "https://avocadoteam.n-e.kr/api/SearchRecipe?q=" + query;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("API","실패 : " +e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                Log.d("API","성공");
                 try {
                     JSONArray arr = new JSONArray(response.body().string());
 
                     runOnUiThread(() -> {
                         for (int i = 0; i < arr.length(); i++) {
-
-                            try{
+                            try {
                                 JSONObject o = arr.getJSONObject(i);
 
-                                // 🔥 자동완성은 title만 필요하므로 Recipe를 검색어 컨테이너로 사용
+                                // 🔥 자동완성은 title만 사용
                                 searchResults.add(new Recipe(
                                         o.getInt("id"),
-                                        o.getString("title"), // 자동완성에 표시될 값
+                                        o.getString("title"),
                                         "",
                                         "",
-                                        0
+                                        0,
+                                        "",
+                                        "",
+                                        ""
+
                                 ));
-                            }catch(Exception ignore){}
+
+                            } catch (Exception ignore) {}
                         }
+
                         searchAdapter.notifyDataSetChanged();
                     });
 
@@ -400,7 +589,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private Map<String, String> getFilterParams() {
 
+        Map<String, String> params = new HashMap<>();
+
+        // 🔵 최근 업데이트
+        int recentId = filterRecent.getCheckedRadioButtonId();
+        if (recentId == R.id.recent_1day) params.put("recent", "1");
+        else if (recentId == R.id.recent_7day) params.put("recent", "7");
+        else if (recentId == R.id.recent_30day) params.put("recent", "30");
+
+
+        // 🟩 조리 시간
+        int timeId = filterTime.getCheckedRadioButtonId();
+        if (timeId == R.id.time_10) params.put("time", "10");
+        else if (timeId == R.id.time_30) params.put("time", "30");
+        else if (timeId == R.id.time_60) params.put("time", "60");
+        else if (timeId == R.id.time_over) params.put("time", "over");
+
+        // 🟧 난이도
+        int diffId = filterDifficulty.getCheckedRadioButtonId();
+        if (diffId == R.id.diff_easy) params.put("difficulty", "easy");
+        else if (diffId == R.id.diff_medium) params.put("difficulty", "medium");
+
+        // 인분
+        int servingId = filterServing.getCheckedRadioButtonId();
+        if (servingId == R.id.serve_1) params.put("serving", "1");
+        else if (servingId == R.id.serve_2) params.put("serving", "2");
+        else if (servingId == R.id.serve_3) params.put("serving", "3");
+        else if (servingId == R.id.serve_4) params.put("serving", "4+");
+
+        return params;
+    }
 
 
 }

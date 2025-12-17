@@ -1,41 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-
-    <!-- RecyclerView (스크롤 전체) -->
+    <!-- ==============================
+         🔵 메인 리스트 (기본 화면)
+         ============================== -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recipeRecycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/bab"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <!-- 검색창 (화면 하단 고정) -->
-    <EditText
-        android:id="@+id/searchBar"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:hint="검색"
-        android:imeOptions="actionSearch"
-        android:inputType="text"
-        android:singleLine="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- ==============================
+         🟦 필터 패널 (오른쪽에서 슬라이드 인)
+         ============================== -->
+    <LinearLayout
+        android:id="@+id/filterContainer"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:background="#F4F4F4"
+        android:orientation="vertical"
+        android:translationX="300dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 📌 최근 업데이트 -->
+                <TextView
+                    android:id="@+id/title_recent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="최근 업데이트"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="6dp"
+                    android:textColor="#222" />
+
+                <RadioGroup
+                    android:id="@+id/filterRecent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/recent_1day"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="최근 1일"
+                        android:textSize="18sp" />
+
+                    <RadioButton
+                        android:id="@+id/recent_7day"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="최근 7일"
+                        android:textSize="18sp" />
+
+                    <RadioButton
+                        android:id="@+id/recent_30day"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="최근 30일"
+                        android:textSize="18sp" />
+                </RadioGroup>
 
 
-    <!-- 하단 앱 바 -->
+
+                <!-- 📌 조리 시간 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="조리 시간"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="6dp"
+                    android:textColor="#222" />
+
+                <RadioGroup
+                    android:id="@+id/filterTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RadioButton android:id="@+id/time_10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="10분 이내" />
+
+                    <RadioButton android:id="@+id/time_30"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="30분 이내" />
+
+                    <RadioButton android:id="@+id/time_60"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="1시간 이내" />
+
+                    <RadioButton android:id="@+id/time_over"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="1시간 이상" />
+                </RadioGroup>
+
+
+                <!-- 📌 난이도 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="난이도"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="6dp"
+                    android:textColor="#222" />
+
+                <RadioGroup
+                    android:id="@+id/filterDifficulty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton android:id="@+id/diff_easy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="쉬움"
+                        android:textSize="18sp" />
+
+                    <RadioButton android:id="@+id/diff_medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="보통"
+                        android:textSize="18sp" />
+
+                    <RadioButton android:id="@+id/diff_hard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="어려움"
+                        android:textSize="18sp" />
+                </RadioGroup>
+
+
+                <!-- 📌 인분 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="인분"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="6dp"
+                    android:textColor="#222" />
+
+                <RadioGroup
+                    android:id="@+id/filterServing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton android:id="@+id/serve_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:textSize="18sp" />
+
+                    <RadioButton android:id="@+id/serve_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2"
+                        android:textSize="18sp" />
+
+                    <RadioButton android:id="@+id/serve_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="3"
+                        android:textSize="18sp" />
+
+                    <RadioButton android:id="@+id/serve_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4+"
+                        android:textSize="18sp" />
+                </RadioGroup>
+
+
+
+                <!-- 📌 적용 버튼 -->
+                <Button
+                    android:id="@+id/btnApplyFilter"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:text="필터 적용"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="20dp" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/optionContainer"
+        android:layout_width="260dp"
+        android:layout_height="0dp"
+        android:background="#F6F6F6"
+        android:orientation="vertical"
+        android:translationX="-300dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- 📌 앱 설정 -->
+                <TextView
+                    android:text="설정"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="6dp"
+                    android:paddingTop="12dp"
+                    android:textColor="#222"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+                <Button
+                    android:id="@+id/btnLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="20dp"
+                    android:text="로그아웃"/>
+
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+
+
+
+    <!-- ==============================
+         🟪 검색 결과 패널 (위에서 내려오는 구조)
+         ============================== -->
     <FrameLayout
-        android:id="@+id/bab"
+        android:id="@+id/searchResultPanel"
         android:layout_width="0dp"
-        android:layout_height="65dp"
+        android:layout_height="0dp"
+        android:background="#CCFFFFFF"
+        android:visibility="gone"
+        android:translationY="-2000dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchResultList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
+
+
+
+    <!-- ==============================
+         ⚫ 하단 바 (네비게이션)
+         ============================== -->
+    <FrameLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
         android:background="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/searchBar"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,8 +313,8 @@
             android:id="@+id/highlightCircle"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:background="@drawable/ic_select"
             android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_select"
             android:translationX="0dp" />
 
         <!-- ▼ 메뉴 컨테이너 -->
@@ -55,8 +322,8 @@
             android:id="@+id/navContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:gravity="center"
+            android:orientation="horizontal"
             android:weightSum="3">
 
             <!-- 홈 -->
@@ -64,8 +331,8 @@
                 android:id="@+id/navHome"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:gravity="center"
+                android:layout_weight="1"
                 android:orientation="vertical">
                 <ImageView
                     android:layout_width="24dp"
@@ -82,8 +349,8 @@
                 android:id="@+id/navFilter"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:gravity="center"
+                android:layout_weight="1"
                 android:orientation="vertical">
                 <ImageView
                     android:layout_width="24dp"
@@ -100,8 +367,8 @@
                 android:id="@+id/navOption"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:gravity="center"
+                android:layout_weight="1"
                 android:orientation="vertical">
                 <ImageView
                     android:layout_width="24dp"
@@ -119,36 +386,36 @@
 
 
 
-    <FrameLayout
-        android:id="@+id/searchResultPanel"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:translationY="-2000dp"
-        android:background="#CCFFFFFF"
-        android:visibility="gone">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/searchResultList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </FrameLayout>
-
-
-
-    <!--래시피 등록 버튼-->
-        <ImageView
-            android:id="@+id/btnRegister"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            app:layout_constraintBottom_toTopOf="@+id/bab"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_register"
-            android:background="@drawable/round_button"/>
+    <!-- ==============================
+         🔵 검색창 (항상 화면 맨 아래)
+         ============================== -->
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="#FFFFFF"
+        android:hint="검색"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:singleLine="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
 
-
+    <!-- ==============================
+         🔴 레시피 등록 버튼 (우측 하단)
+         ============================== -->
+    <ImageView
+        android:id="@+id/btnRegister"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:background="@drawable/round_button"
+        android:src="@drawable/ic_register"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="12dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

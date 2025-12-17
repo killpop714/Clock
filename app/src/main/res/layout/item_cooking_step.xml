@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- 단계 번호 -->
+        <TextView
+            android:id="@+id/step_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FF5722"
+            android:layout_marginEnd="8dp"
+            tools:text="1" />
+
+        <!-- 단계 제목 / 설명을 감싸는 영역 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/step_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                tools:text="고기 손질하기" />
+
+            <TextView
+                android:id="@+id/step_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="13sp"
+                android:textColor="#555555"
+                tools:text="돼지고기는 적당한 크기로 썰어주세요." />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 단계 이미지 -->
+    <ImageView
+        android:id="@+id/step_image"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_marginTop="6dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:background="#EEEEEE"
+        tools:src="@drawable/ic_home_noimage" />
+
+</LinearLayout>

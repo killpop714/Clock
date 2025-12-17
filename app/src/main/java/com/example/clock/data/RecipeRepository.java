@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -48,14 +49,16 @@ public class RecipeRepository {
 
     //요리 순서 상수 변수
     public static final int PICK_STEP_IMAGE = 2000;
+    public static ArrayList<Uri> stepImageUris = new ArrayList<>();
+    public static int currentStepIndex = -1;
     public static ImageView currentStepImageView = null;
     int stepCount = 0;
 
 
     // 리스트 선택 상수 변수
-    final String[] portionItem = {"1인분","2인분","3인분","4인분","5인분","6인분 이상"};
-    final String[] CookingTimeItem = {"5분 이내","10분 이내","15분 이내","20분 이내","30분 이내","60분 이내","1시간 이내","2시간 이내","2시간 이상"};
-    final String[] difficultyItem = {"쉬움", "보통", "어려움", "매우 어려움"};
+    final String[] portionItem = {"1인분","2인분","3인분","4인분 이상"};
+    final String[] CookingTimeItem = {"10분 이내","30분 이내","1시간 이내","1시간 이상"};
+    final String[] difficultyItem = {"쉬움", "보통", "어려움"};
 
     public RecipeRepository(Activity activity){
         this.activity = activity;
@@ -151,8 +154,8 @@ public class RecipeRepository {
 
             JSONObject stepObj = new JSONObject();
             try {
-                stepObj.put("order", i+1);
-                stepObj.put("text", stepText);
+                stepObj.put("step", i+1);
+                stepObj.put("description", stepText);
             } catch (Exception ignored) {}
 
             stepArray.put(stepObj);
