@@ -3,7 +3,9 @@ package com.example.clock.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -100,6 +102,19 @@ public class RecipeDetailActivity extends AppCompatActivity {
         stepRecycler.setAdapter(stepAdapter);
 
         creatorView = findViewById(R.id.detail_creator);
+
+        stepRecycler.setNestedScrollingEnabled(false);
+
+        stepRecycler.setNestedScrollingEnabled(false);
+        stepRecycler.setHasFixedSize(false);
+
+
+        LinearLayoutManager lm = new LinearLayoutManager(this);
+        lm.setAutoMeasureEnabled(true);
+        stepRecycler.setLayoutManager(lm);
+
+
+
 
 
         // 상단 기본 정보
@@ -224,7 +239,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     if (stepArr != null) {
                         for (int i = 0; i < stepArr.length(); i++) {
                             JSONObject o = stepArr.getJSONObject(i);
-
+                            Log.d("횟수","작동중");
                             stepList.add(new CookingStep(
                                     i,              // 임시 ID
                                     recipeId,
@@ -248,5 +263,32 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 }
             }
         });
+
+        stepRecycler.post(() -> {
+            RecyclerView.Adapter adapter = stepRecycler.getAdapter();
+            RecyclerView.LayoutManager lm = stepRecycler.getLayoutManager();
+
+            if (adapter == null || lm == null) return;
+
+            int totalHeight = 0;
+            for (int i = 0; i < adapter.getItemCount(); i++) {
+                View listItem = lm.findViewByPosition(i);
+                if (listItem == null) {
+                    listItem = LayoutInflater.from(this)
+                            .inflate(R.layout.item_cooking_step, stepRecycler, false);
+                    listItem.measure(
+                            View.MeasureSpec.makeMeasureSpec(stepRecycler.getWidth(), View.MeasureSpec.EXACTLY),
+                            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                    );
+                }
+                totalHeight += listItem.getMeasuredHeight();
+            }
+
+            ViewGroup.LayoutParams params = stepRecycler.getLayoutParams();
+            params.height = totalHeight;
+            stepRecycler.setLayoutParams(params);
+        });
+
+
     }
 }

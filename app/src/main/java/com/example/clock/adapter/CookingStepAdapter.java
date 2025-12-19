@@ -50,6 +50,7 @@ public class CookingStepAdapter extends RecyclerView.Adapter<CookingStepAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.d("포지션", "position: "+list.get(position));
         CookingStep item = list.get(position);
 
         holder.stepNumView.setText(String.valueOf(item.step));
@@ -72,6 +73,7 @@ public class CookingStepAdapter extends RecyclerView.Adapter<CookingStepAdapter.
 
     @Override
     public int getItemCount() {
+        Log.d("리스트 크기", "getItemCount: "+list.size());
         return list.size();
     }
 }

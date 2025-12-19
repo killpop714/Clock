@@ -1,6 +1,7 @@
 package com.example.clock.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Ingredient item = list.get(position);
+        Log.d("포지션", "position: "+list.get(position));
         holder.nameView.setText(item.name);
         holder.amountView.setText(item.amount);
     }
